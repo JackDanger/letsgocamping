@@ -1,4 +1,4 @@
-module SilentVoices
+module Leviticus
 
   Directory      = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
   ViewsDirectory = File.expand_path(File.join(File.dirname(__FILE__), '..', 'views'))

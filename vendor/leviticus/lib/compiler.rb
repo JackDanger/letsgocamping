@@ -1,15 +1,22 @@
-module SilentVoices
-  class Compiler
+module Leviticus
+  class Source
 
     def initialize source, level
       @source = source
       @level = level
-      set_feminizing_forms
     end
 
     def process *media
       @compiled = compile
       write_layout media
+    end
+
+    def compile_with &block
+      @compiler = block || proc {|line| Leviticus::Page.new line }
+    end
+
+    def start_page = page
+      @start_page ||= Leviticus::StartPage.new
     end
 
     protected
@@ -39,7 +46,7 @@ module SilentVoices
       end
 
       def write_layout media
-        StartPage.new
+        start_page!
         if run_books?
           IndexPage.new
           @compiled.each do |book|
