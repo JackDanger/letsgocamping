@@ -7,27 +7,27 @@ require File.expand_path File.join(File.dirname(__FILE__), 'lib', 'silent_voices
 namespace :build do
   desc "Build the whole project"
   task :all do
-    SilentVoices::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :web, :kindle
+    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :web, :kindle
   end
 
   desc "Build an html file for Kindle publishing"
   task :kindle do
-    SilentVoices::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :kindle
+    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :kindle
   end
 
   desc "Build the html files for the web"
   task :web do
-    SilentVoices::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :web
+    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :web
   end
 
   desc "Build the front pages"
   task :front do
-    SilentVoices::Compiler.new(File.read(GUTENBERG_SOURCE), 'front').process
+    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'front').process
   end
 
   desc "Skip the compilation step"
   task :fast do
-    SilentVoices::Compiler.new(File.read(GUTENBERG_SOURCE), 'fast').process
+    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'fast').process
   end
 
   desc "Build the blog"
