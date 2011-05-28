@@ -1,0 +1,23 @@
+#index_page
+  #header
+    .row
+      .column.grid_9
+        %h1
+          %a{:href =>'../index.html'} Silent Voices | The Feminist Bible
+    .row
+      .column.grid_9
+
+
+  #container.row
+    #facebook_like
+      %iframe{:src => "http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fsilentvoicesbible.com/#{path_from(SilentVoices.start_page)}&amp;layout=button_count&amp;show_faces=false&amp;width=50&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35", :scrolling => "no", :frameborder => "0", :style => "border:none; overflow:hidden; width:120px; height:35px;", :allowTransparency => "true"}
+
+
+    .column.grid_9
+      - books_grouped.each do |testament, groups|
+        .testament
+          %h1= testament
+          - groups.each do |name, books|
+            .group
+              %h3= name
+              = books.map {|book| "<a href='#{book.path_from(self)}' class='book_name_link'>#{book.name}</a>" }.join('<span class="comma">,</span> ')

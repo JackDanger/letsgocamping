@@ -1,0 +1,66 @@
+!!! 1.1
+%html{ :xmlns => "http://www.w3.org/1999/xhtml",  'xmlns:fb' => "http://developers.facebook.com/schema/", 'xmlns:og' => 'http://opengraphprotocol.org/schema/' }
+  %head
+    %script{ :type => "text/javascript" } var _sf_startpt=(new Date()).getTime()
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+    %meta{ :name => 'google-site-verification', :content => 'tlUTVmiUzNZK97q42kXPczZLEILUOWEexFMRY0kbvv0' }
+    %link{ :href => stylesheet_path, :media => 'screen', :rel => 'stylesheet', :type => 'text/css'}
+    %meta{ :property => "fb:admins", :content => "10726983" }
+    %link{ :href => 'http://fonts.googleapis.com/css?family=Bentham', :media => 'screen', :rel => 'stylesheet', :type => 'text/css'}
+    %link{ :href => 'http://fonts.googleapis.com/css?family=Neuton', :media => 'screen', :rel => 'stylesheet', :type => 'text/css'}
+    %script{:src => "http://connect.facebook.net/en_US/all.js#xfbml=1"}
+    %title= title
+  %body
+
+    = yield
+
+    .row
+      #footer
+        .column.grid_9
+          Created by
+          = succeed ',' do
+            %a{:href => "http://jackcanty.com"} Jack
+          send corrections and feedback to
+          %a{:href => 'mailto:speak@silentvoicesbible.com'}speak @ silentvoicesbible.com
+          .creative_commons
+            All content is licensed under a
+            %a{:rel => "license", :href => "http://creativecommons.org/licenses/by/3.0/"}
+              Creative Commons Attribution 3.0 License
+
+    %script{:type => "text/javascript"}
+      :erb
+
+        if(/silentvoicesbible.com/.test(location.host)){
+
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-331450-16']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+          FB.Event.subscribe('edge.create', function(href, widget) {
+            console.log(href, widget)
+            _gaq.push(['_trackEvent', 'facebook', 'like', href])
+          });
+
+          var _sf_async_config={uid:7921,domain:"silentvoicesbible.com"};
+          (function(){
+            function loadChartbeat() {
+              window._sf_endpt=(new Date()).getTime();
+              var e = document.createElement('script');
+              e.setAttribute('language', 'javascript');
+              e.setAttribute('type', 'text/javascript');
+              e.setAttribute('src',
+                 (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
+                 "js/chartbeat.js");
+              document.body.appendChild(e);
+            }
+            var oldonload = window.onload;
+            window.onload = (typeof window.onload != 'function') ?
+               loadChartbeat : function() { oldonload(); loadChartbeat(); };
+          })();
+        }
