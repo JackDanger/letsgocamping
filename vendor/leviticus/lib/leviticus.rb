@@ -22,5 +22,25 @@ module Leviticus
     def pages
       @pages ||= {}
     end
+
+    def index page = nil
+      @index = page if page
+      @index
+    end
+
+    def write_all media = [:html]
+      Dir.mkdir @site rescue ''
+      media.each do |medium|
+        Leviticus.pages.each do |page_class|
+          page_class.each do |page|
+            page.medium = medium
+            page.write
+            print '.'
+            STDOUT.flush
+          end
+        end
+        puts "Wrote #{Leviticus.pages.sum {|_,pages| pages.size}} pages"
+      end
+    end
   end
 end

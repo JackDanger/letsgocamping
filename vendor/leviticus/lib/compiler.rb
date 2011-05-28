@@ -1,62 +1,35 @@
 module Leviticus
   class Source
 
-    def initialize source, level
+    def initialize source
       @source = source
-      @level = level
     end
 
     def process *media
-      @compiled = compile
+      @compiled = run_compiler!
       write_layout media
     end
 
-    def compile_with &block
-      @compiler = block || proc {|line| Leviticus::Page.new line }
-    end
-
-    def start_page = page
-      @start_page ||= Leviticus::StartPage.new
+    def compile &block
+      @compiler = block
     end
 
     protected
 
-      def run_books?
-        %{books fast}.include? @level
-      end
-
-      def fast_compile?
-        'fast' == @level
-      end
-
-      def compile
-        return [] unless run_books?
-        each_book do |book_text|
-          each_chapter book_text do |chapter_text|
-            each_verse chapter_text do |verse|
-              unless fast_compile?
-                verse = normalize       verse
-                verse = strip_comments  verse
-                verse = feminize        verse
-              end
-              verse
-            end
-          end
-        end
+      def run_compiler!
+        raise "Compiler not defined" unless @compiler
+        @compiler.call @source
       end
 
       def write_layout media
-        start_page!
-        if run_books?
-          IndexPage.new
-          @compiled.each do |book|
-            BookPage.new book
-            book[:chapters].each do |chapter|
-              ChapterPage.new chapter, book
-            end
+        Leviticus.index.prepare
+        Leviticus.pages.each do |page_class|
+          next if Leviticus.index.class == page_class
+          page_class.each do |page|
+            page.prepare
           end
         end
-        Page.write_all media
+        Leviticus.write_all media
       end
 
       def each_book

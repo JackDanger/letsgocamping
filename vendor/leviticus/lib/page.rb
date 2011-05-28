@@ -51,42 +51,6 @@ xfbml: true});
 </script><fb:like href="http://silentvoicesbible.com/#{path_from(SilentVoices.start_page)}" show_faces="false" width="120" action="like" font="lucida grande" layout="button_count"></fb:like>}
     end
 
-    def self.kindle_style
-      File.read('kindle.css')
-    end
-
-    def self.write_all(media = [:web])
-      write_web    if media.include? :web
-      write_kindle if media.include? :kindle
-    end
-
-    def self.write_web
-      Dir.mkdir Directory + '/voices' rescue ''
-      SilentVoices.pages.each do |page|
-        page.is_kindle = false
-        page.write
-      end
-      puts ''
-      puts "Wrote #{SilentVoices.pages.size} pages"
-    end
-
-    def self.write_kindle
-      puts ''
-      print 'joining: '
-      html = []
-      html << "<html charset='utf-8'><head><title>Silent Voices Bible</title><style>#{kindle_style}</style></head><body>"
-      SilentVoices.pages.each_with_index do |page, idx|
-        print '.'
-        STDOUT.flush
-        page.is_kindle = true
-        html << page.view.render(page)
-      end
-      html << "</body></html>"
-      File.open(Directory + '/kindle.html', 'w') do |f|
-        f.write html.join('<mbp:pagebreak/>')
-      end
-      puts ''
-    end
   end
 
   class StartPage < Page
