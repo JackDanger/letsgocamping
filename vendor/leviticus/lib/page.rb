@@ -1,26 +1,5 @@
 module Leviticus
 
-  Directory      = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
-  ViewsDirectory = File.expand_path(File.join(File.dirname(__FILE__), '..', 'views'))
-
-  def self.pages
-    @pages ||= []
-  end
-
-  def self.start_page
-    @start_page
-  end
-  def self.start_page= page
-    @start_page = page
-  end
-
-  def self.index_page
-    @index_page
-  end
-  def self.index_page= page
-    @index_page = page
-  end
-
   class Page
     attr_accessor :path, :name, :links, :verses, :is_kindle
 
