@@ -13,7 +13,7 @@ module Leviticus
     end
 
     def source source_string
-      @source = Leviticus::Source.new source_string
+      @source = Source.new source_string
     end
 
     def site
@@ -41,7 +41,7 @@ module Leviticus
     def write_all media = [:html]
       Dir.mkdir @site rescue ''
       media.each do |medium|
-        Leviticus.pages.each do |page_class|
+        pages.each do |page_class|
           page_class.each do |page|
             page.medium = medium
             page.write
@@ -49,7 +49,7 @@ module Leviticus
             STDOUT.flush
           end
         end
-        puts "Wrote #{Leviticus.pages.sum {|_,pages| pages.size}} pages"
+        puts "Wrote #{pages.sum {|_,p| p.size}} pages"
       end
     end
 
