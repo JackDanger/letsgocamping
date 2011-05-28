@@ -32,7 +32,10 @@ module Leviticus
     end
 
     def prepare
-      raise "Please subclass the prepare method on #{self.class}. This is where you set up all page content before the view is processed."
+      raise <<-DOC
+        Please subclass the prepare method on #{self.class}.
+        This is where you set up all page content before the view is processed.
+      DOC
     end
 
     def write

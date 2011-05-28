@@ -1,27 +1,33 @@
 module Leviticus
   class Source
 
-    def initialize source
-      @source = source
+    def initialize *args
+      raise <<-DOC
+        Please subclass the initialize method of your source.
+        It should store a `@content` instance variable with the
+        full contents of your source material
+      DOC
     end
 
     def process *media
-      @compiled = run_compiler!
-      write_layout media
-    end
-
-    def compile &block
-      @compiler = block
+      run_compiler!
+      write media
     end
 
     protected
 
       def run_compiler!
-        raise "Compiler not defined" unless @compiler
-        @compiler.call @source
+        unless respond_to? :compile
+          raise <<-DOC
+            Please define a `compile` method to your #{self.class} class.
+            This should read the @content string and instantiate each page object,
+            assigning to each page the values needed to render a complete html document.
+          DOC
+        end
+        compile @content
       end
 
-      def write_layout media
+      def write media
         Leviticus.index.prepare
         Leviticus.pages.each do |page_class|
           next if Leviticus.index.class == page_class
