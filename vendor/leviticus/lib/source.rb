@@ -1,6 +1,9 @@
 module Leviticus
   class Source
 
+    attr_reader :content
+    attr_accessor :owner
+
     def initialize *args
       raise <<-DOC
         Please subclass the initialize method of your source.
@@ -11,7 +14,9 @@ module Leviticus
 
     def process *media
       run_compiler!
-      write media
+      media.each do |medium|
+        yield medium
+      end
     end
 
     protected
@@ -24,18 +29,7 @@ module Leviticus
             assigning to each page the values needed to render a complete html document.
           DOC
         end
-        compile @content
-      end
-
-      def write media
-        Leviticus.index.prepare
-        Leviticus.pages.each do |page_class|
-          next if Leviticus.index.class == page_class
-          page_class.each do |page|
-            page.prepare
-          end
-        end
-        Leviticus.write_all media
+        compile
       end
   end
 end

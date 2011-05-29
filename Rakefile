@@ -1,33 +1,31 @@
 Rake.application.options.trace = true
 
-GUTENBERG_SOURCE = File.expand_path File.join(File.dirname(__FILE__), 'vendor', '8924.txt.utf8')
-
-require File.expand_path File.join(File.dirname(__FILE__), 'lib', 'silent_voices')
+require File.expand_path File.join(File.dirname(__FILE__), 'lib', 'recreation')
 
 namespace :build do
   desc "Build the whole project"
   task :all do
-    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :web, :kindle
+    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'books').process :web, :kindle
   end
 
   desc "Build an html file for Kindle publishing"
   task :kindle do
-    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :kindle
+    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'books').process :kindle
   end
 
   desc "Build the html files for the web"
   task :web do
-    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'books').process :web
+    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'books').process :web
   end
 
   desc "Build the front pages"
   task :front do
-    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'front').process
+    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'front').process
   end
 
   desc "Skip the compilation step"
   task :fast do
-    Recreation::Compiler.new(File.read(GUTENBERG_SOURCE), 'fast').process
+    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'fast').process
   end
 
   desc "Build the blog"
@@ -50,7 +48,7 @@ task :live do
 end
 
 task :irb do
-  exec "irb -rubygems -I'lib' -r silent_voices"
+  exec "irb -rubygems -I'lib' -r recreation"
 end
 
 task :deploy do
