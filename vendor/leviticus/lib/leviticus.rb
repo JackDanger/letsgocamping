@@ -18,8 +18,9 @@ module Leviticus
     @views = views
   end
 
-  def source source_class
-    @source = source_class.new
+  def source source_class = nil
+    @source = source_class.new if source_class
+    @source
   end
 
   def site
