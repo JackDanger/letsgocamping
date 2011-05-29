@@ -2,8 +2,9 @@ require 'sqlite3'
 require 'activerecord'
 
 module Recreation
-  DBFile  = File.join(File.dirname(__FILE__), '..', 'db', 'db.sqlite')
-  Logfile = File.join(File.dirname(__FILE__), '..', 'db', 'db.log')
+  File.mkdir File.join(File.dirname(__FILE__), '..', 'db') rescue nil
+  DBFile   = File.join(File.dirname(__FILE__), '..', 'db', 'db.sqlite')
+  Logfile  = File.join(File.dirname(__FILE__), '..', 'db', 'db.log')
 
   module Models
 
