@@ -1,4 +1,4 @@
 module Recreation
-  class Index < ::Leviticus::Page
+  class Index < Leviticus::Page
   end
 end

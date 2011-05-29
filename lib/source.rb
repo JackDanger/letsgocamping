@@ -1,11 +1,9 @@
-require 'sqlite3'
 require 'activesupport'
 require 'nokogiri'
 module Recreation
   class Source < Leviticus::Source
 
     DataDotGov = File.join File.dirname(__FILE__), '..', 'vendor', 'us_government_recreation_sites_and_facilities.xml'
-    DBFile     = File.join File.dirname(__FILE__), '..', 'vendor', 'db.sqlite'
 
     def initialize
       @data = File.open DataDotGov
@@ -16,16 +14,15 @@ module Recreation
     end
 
     protected
-      def database
-        @database ||= SQLite3::Database.new DBFile
-      end
-
       def parse_xml!
         @doc = Nokogiri::XML @data
         models.each do |model|
-          @doc.xpath("//arc:#{model}").each do |node|
+          @doc.xpath("//arc:#{model}").each_with_index do |node, idx|
+            if 0 == idx
+              # create the table
+              model.create_schema_from_xml node
+            end
             model.create_from_xml node
-            return
           end
         end
       end
