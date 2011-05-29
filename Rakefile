@@ -5,54 +5,6 @@ require File.expand_path File.join(File.dirname(__FILE__), 'lib', 'recreation')
 namespace :build do
   desc "Build the whole project"
   task :all do
-    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'books').process :web, :kindle
+    Recreation.process! :html
   end
-
-  desc "Build an html file for Kindle publishing"
-  task :kindle do
-    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'books').process :kindle
-  end
-
-  desc "Build the html files for the web"
-  task :web do
-    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'books').process :web
-  end
-
-  desc "Build the front pages"
-  task :front do
-    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'front').process
-  end
-
-  desc "Skip the compilation step"
-  task :fast do
-    Recreation::Source.new(File.read(GUTENBERG_SOURCE), 'fast').process
-  end
-
-  desc "Build the blog"
-  task :blog do
-    system 'cd _blog_src; jekyll; cd -'
-  end
-end
-
-task :build => ['build:all', 'build:blog']
-task :blog => ['build:blog', 'see_blog']
-
-task :see do
-  system 'open index.html'
-end
-task :see_blog do
-  system 'open blog/index.html'
-end
-task :live do
-  system 'open http://silentvoicesbible.com/'
-end
-
-task :irb do
-  exec "irb -rubygems -I'lib' -r recreation"
-end
-
-task :deploy do
-  system %Q{git commit voices index.html blog -m "building"}
-  system %Q{git push github master}
-  system %Q{ssh 9suits.com "cd /www/silentvoicesbible.com; git pull"}
 end
