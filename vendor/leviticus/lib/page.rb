@@ -35,6 +35,9 @@ module Leviticus
       raise <<-DOC
         Please subclass the prepare method on #{self.class}.
         This is where you set up all page content before the view is processed.
+        Any data that you want to use in your view must be available as an instance
+        method on #{self.class}.
+        Either write these methods explicitly or call `locals` to pass in simple values
       DOC
     end
 
