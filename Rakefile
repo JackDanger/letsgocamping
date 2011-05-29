@@ -8,3 +8,8 @@ namespace :build do
     Recreation.process! :html
   end
 end
+
+
+task :irb do
+  exec "irb -rubygems -I'lib' -r recreation"
+end
