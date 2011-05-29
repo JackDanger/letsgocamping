@@ -43,9 +43,9 @@ module Leviticus
   def process! media = [:html]
     raise "Source content not yet supplied" unless @source
     @source.process media do |medium|
-      index.prepare
+      index.new.prepare
       pages.each do |page_class|
-        next if index.class == page_class
+        next if index == page_class
         page_class.each do |page|
           page.prepare
         end
