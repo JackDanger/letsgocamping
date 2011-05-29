@@ -13,3 +13,6 @@ end
 task :irb do
   exec "irb -rubygems -I'lib' -r recreation"
 end
+task :run do
+  exec %Q{ruby -rubygems -I'lib' -r recreation -e "#{ARGV.last}"}
+end
