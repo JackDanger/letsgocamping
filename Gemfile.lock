@@ -18,6 +18,8 @@ GEM
     i18n (0.5.0)
     nokogiri (1.4.4)
     sqlite3 (1.3.3)
+    sqlite3-ruby (1.3.3)
+      sqlite3 (>= 1.3.3)
     tzinfo (0.3.27)
 
 PLATFORMS
@@ -29,4 +31,4 @@ DEPENDENCIES
   geokit
   haml
   nokogiri
-  sqlite3
+  sqlite3-ruby
