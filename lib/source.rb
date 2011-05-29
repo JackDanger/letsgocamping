@@ -8,7 +8,7 @@ module Recreation
     DBFile     = File.join File.dirname(__FILE__), '..', 'vendor', 'db.sqlite'
 
     def initialize
-      @content = File.read DataDotGov
+      @data = File.open DataDotGov
     end
 
     def compile
@@ -21,16 +21,16 @@ module Recreation
       end
 
       def parse_xml!
-        @doc = Nokogiri::XML.parse @content
-        xml_record_types.each do |record_type|
-          @doc.search "arc:#{record_type}" do |variable|
-            p variable
+        @doc = Nokogiri::XML @data
+        models.each do |model|
+          @doc.xpath("//arc:#{model}").each do |node|
+            model.create_from_xml node
+            return
           end
-          break
         end
       end
 
-      def xml_record_types
+      def models
         %w{
           Event
           Facility
@@ -47,7 +47,7 @@ module Recreation
           RecAreaEvent
           RecAreaFacility
           RecreationalActivity
-        }
+        }.map(&:constantize)
       end
   end
 end
