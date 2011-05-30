@@ -1,6 +1,6 @@
 class Search
   def self.each
-    [new]
+    yield [new]
   end
 
   include Leviticus::Page

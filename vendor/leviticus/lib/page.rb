@@ -12,6 +12,7 @@ module Leviticus
       all << klass
       klass.instance_exec do
         attr_accessor :path, :title, :medium
+        cattr_accessor :filename_constructor
         extend Leviticus::Page::ClassMethods
       end
       Leviticus.define_enumerable_on klass
@@ -51,13 +52,13 @@ module Leviticus
     end
 
     def template
-      template_file    = File.join Leviticus.views, "template.#{medium}.haml"
+      template_file    = File.join Leviticus.options[:views], "template.#{medium || :html}.haml"
       template_content = File.read template_file
       Haml::Engine.new template_content, :filename => 'template'
     end
 
     def view
-      view_file    = File.join Leviticus.views, "#{Leviticus.underscore self.class.name}.#{medium}.haml"
+      view_file    = File.join Leviticus.options[:views], "#{self.class.name.underscore}.#{medium || :html}.haml"
       view_content = File.read view_file
       Haml::Engine.new view_content, :filename => src
     end
@@ -65,7 +66,7 @@ module Leviticus
     protected
 
       def filename_constructor
-        unless @@filename_constructor
+        unless filename_constructor
           raise <<-DOC
           
             You must define a filename for each #{self.class}.
@@ -76,7 +77,7 @@ module Leviticus
               end
           DOC
         end
-        @filename_constructor
+        filename_constructor
       end
 
     module ClassMethods
@@ -106,13 +107,13 @@ module Leviticus
       end
 
       def write_to &block
-        @filename_constructor = block
+        self.filename_constructor = block
       end
     end
   end
 
   # If the page class doesn't respond to `each` then
-  # try to automatically detect it. Try both 'all' and 'find_all'
+  # try to automatically detect it. It tries both 'all' and 'find_all'
   def self.define_enumerable_on klass
     unless klass.respond_to? :each
       if klass.respond_to? :all
