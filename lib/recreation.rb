@@ -1,17 +1,56 @@
+require 'activesupport'
+require 'nokogiri'
 require File.expand_path File.join(File.dirname(__FILE__), '..', 'vendor', 'leviticus/lib/leviticus')
-require File.expand_path(File.join(File.dirname(__FILE__), 'pages', 'index'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'pages', 'place'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'pages', 'search'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'source'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'models'))
 
+class Recreation < Leviticus::Source
 
+  DataDotGov = File.join File.dirname(__FILE__), '..', 'vendor', 'us_government_recreation_sites_and_facilities.xml'
 
-module Recreation
-  include Leviticus
+  def initialize
+    @data = File.open DataDotGov
+  end
 
-  index Recreation::Index
+  def compile
+    p Leviticus::Page.all
+    parse_xml!
+  end
 
-  source Recreation::Source
+  protected
+    def parse_xml!
+      @doc = Nokogiri::XML @data
+      models.each do |model|
+        @doc.xpath("//arc:#{model}").each_with_index do |node, idx|
+          if 0 == idx
+            # create the table
+            model.create_schema_from_xml node
+          end
+          model.create_from_xml node
+        end
+      end
+    end
 
+    def models
+      %w{
+        Event
+        Facility
+        FacilityActivity
+        FacilityAddress
+        FacilityEvent
+        OrgFacilityRole
+        OrgRecAreaRole
+        Organization
+        RecArea
+        RecAreaActivity
+        RecAreaAddress
+        RecAreaAdvisory
+        RecAreaEvent
+        RecAreaFacility
+        RecreationalActivity
+      }.map(&:constantize)
+    end
+end
+
+require File.expand_path(File.join(File.dirname(__FILE__), 'data'))
+Dir.glob(File.expand_path(File.join(File.dirname(__FILE__), 'pages', '*'))).each do |page|
+  require page
 end

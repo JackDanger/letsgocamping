@@ -4,14 +4,59 @@ module Leviticus
     attr_reader :content
     attr_accessor :owner
 
-    def process *media
-      run_compiler!
+    # Configure the 
+    def self.output_to site
+      @site = site
+    end
+
+    def self.views_directory views
+      @views = views
+    end
+
+    def site
+      @@site  ||= File.expand_path File.join(`pwd`.chomp, '_site')
+    end
+
+    def views
+      @@views ||= File.expand_path File.join(`pwd`.chomp, 'views')
+    end
+
+    def process! media = [:html]
+      process media do |medium|
+        index.new.prepare
+        pages.each do |page_class|
+          next if index == page_class
+          page_class.each do |page|
+            page.prepare
+          end
+        end
+        write_all media
+      end
+    end
+
+    def write_all media = [:html]
+      Dir.mkdir @site rescue ''
       media.each do |medium|
-        yield medium
+        pages.each do |page_class|
+          page_class.each do |page|
+            page.medium = medium
+            page.write
+            print '.'
+            STDOUT.flush
+          end
+        end
+        puts "Wrote #{pages.sum {|_,p| p.size}} pages"
       end
     end
 
     protected
+
+      def process *media
+        run_compiler!
+        media.each do |medium|
+          yield medium
+        end
+      end
 
       def run_compiler!
         unless respond_to? :compile
@@ -23,5 +68,16 @@ module Leviticus
         end
         compile
       end
+
+  end
+
+  # swiped from ActiveSupport
+  def underscore word
+    word = word.to_s.dup
+    word.gsub! /([A-Z]+)([A-Z][a-z])/,'\1_\2'
+    word.gsub! /([a-z\d])([A-Z])/,'\1_\2'
+    word.tr! "-", "_"
+    word.downcase!
+    word
   end
 end

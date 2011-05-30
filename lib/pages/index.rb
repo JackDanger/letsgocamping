@@ -1,4 +1,3 @@
-module Recreation
-  class Index < Leviticus::Page
-  end
+class Index
+  include Leviticus::Page
 end

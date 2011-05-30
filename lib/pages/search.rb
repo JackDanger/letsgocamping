@@ -1,4 +1,3 @@
-module Recreation
-  class Search < Leviticus::Page
-  end
+class Search
+  include Leviticus::Page
 end

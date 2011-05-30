@@ -1,4 +1,4 @@
-module Recreation
+class Recreation
   module FromXML
     def create_schema_from_xml nokogiri
       return if table_exists?

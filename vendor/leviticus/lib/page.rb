@@ -1,33 +1,31 @@
 module Leviticus
-  class Page
-    attr_accessor :path, :title, :medium
-
-    def initialize *args
-      (Leviticus.pages[self.class] ||= []) << self
+  module Page
+    def self.all
+      @all ||= []
     end
 
-    # Add a method to your page to make that value available in the view
-    # as a helper method:
-    #
-    #  class MySpecialPage < Leviticus::Page
-    #    def page_number
-    #      data[:current_page] # assuming you've implemented 'data' elsewhere
-    #    end
-    #  end
-    #
-    # Add any simple values you want to the page (like page number or author)
-    # just by calling locals:
-    #
-    #  class MySpecialPage < Leviticus::Page
-    #    locals :author => "Jack Danger",
-    #           :show_contact_form => true
-    #
-    def locals variables
-      variables.each do |key, value|
-        if respond_to?(key)
-          raise %Q{#{self.class} already has a "#{key}" method, pick a different name}
+    def self.included klass
+      all << klass
+      klass.instance_exec do
+        attr_accessor :path, :title, :medium
+        extend Leviticus::Page::ClassMethods
+      end
+      define_enumerable_on klass
+    end
+
+    def self.define_enumerable_on klass
+      unless respond_to?(:each)
+        if respond_to? :all
+          def each
+            all.each
+          end
+        elsif respond_to?(:find_all)
+          def each
+            find_all.each
+          end
+        else
+          raise "Please define the method `each` on #{klass}"
         end
-        define_method(key) { value }
       end
     end
 
@@ -61,6 +59,33 @@ module Leviticus
       view_file    = File.join Leviticus.views, "#{Leviticus.underscore self.class.name}.#{medium}.haml"
       view_content = File.read view_file
       Haml::Engine.new view_content, :filename => src
+    end
+
+    module ClassMethods
+      # Add a method to your page to make that value available in the view
+      # as a helper method:
+      #
+      #  class MySpecialPage < Leviticus::Page
+      #    def page_number
+      #      data[:current_page] # assuming you've implemented 'data' elsewhere
+      #    end
+      #  end
+      #
+      # Add any simple values you want to the page (like page number or author)
+      # just by calling locals:
+      #
+      #  class MySpecialPage < Leviticus::Page
+      #    locals :author => "Jack Danger",
+      #           :show_contact_form => true
+      #
+      def locals variables
+        variables.each do |key, value|
+          if respond_to?(key)
+            raise %Q{#{self.class} already has a "#{key}" method, pick a different name}
+          end
+          define_method(key) { value }
+        end
+      end
     end
   end
 end

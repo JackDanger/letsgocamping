@@ -1,22 +1,21 @@
 require 'sqlite3'
 require 'activerecord'
 
-module Recreation
-  File.mkdir File.join(File.dirname(__FILE__), '..', 'db') rescue nil
-  DBFile   = File.join(File.dirname(__FILE__), '..', 'db', 'db.sqlite')
-  Logfile  = File.join(File.dirname(__FILE__), '..', 'db', 'db.log')
-
+class Recreation
   module Data
 
+    File.mkdir File.join(File.dirname(__FILE__), '..', 'db') rescue nil
+    DBFile   = File.join(File.dirname(__FILE__), '..', 'db', 'db.sqlite')
+    Logfile  = File.join(File.dirname(__FILE__), '..', 'db', 'db.log')
     # SETUP
-    SQLite3::Database.new Recreation::DBFile
+    SQLite3::Database.new DBFile
 
     ActiveRecord::Base.establish_connection(
       :adapter  => "sqlite3",
-      :database => Recreation::DBFile
+      :database => DBFile
     )
 
-    ActiveRecord::Base.logger = Logger.new File.open(Recreation::Logfile, File::WRONLY | File::APPEND | File::CREAT)
+    ActiveRecord::Base.logger = Logger.new File.open(Logfile, File::WRONLY | File::APPEND | File::CREAT)
 
     def self.start_over
       puts 'STARTING OVER'
@@ -25,9 +24,4 @@ module Recreation
   end
 end
 
-require File.expand_path(File.join(File.dirname(__FILE__), 'models', 'from_xml'))
-
-Dir.glob(File.expand_path(File.join(File.dirname(__FILE__), 'models', '*'))).each do |model|
-  require model
-end
-
+require File.expand_path(File.join(File.dirname(__FILE__), 'from_xml'))
