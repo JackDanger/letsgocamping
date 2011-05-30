@@ -11,12 +11,7 @@ class Recreation < Leviticus::Source
   end
 
   def compile
-    parse_xml_into_database!
-    Leviticus::Page.all.each do |page_class|
-      page_class.each do |page|
-        page.prepare
-      end
-    end
+    # parse_xml_into_database!
   end
 
   protected

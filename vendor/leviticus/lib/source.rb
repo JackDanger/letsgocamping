@@ -21,9 +21,9 @@ module Leviticus
       @@views ||= File.expand_path File.join(`pwd`.chomp, 'views')
     end
 
-    def process! media = [:html]
+    def process media = [:html]
       run_compiler!
-      prepare_all media
+      prepare_all
       write_all   media
     end
 
@@ -59,16 +59,10 @@ module Leviticus
 
     protected
 
-      def process *media
-        run_compiler!
-        media.each do |medium|
-          yield medium
-        end
-      end
-
       def run_compiler!
         unless respond_to? :compile
           raise <<-DOC
+            
             Please define a `compile` method to your #{self.class} class.
             This should read all source data and instantiate each page object,
             assigning to each page the values needed to render a complete html document.

@@ -17,24 +17,27 @@ module Leviticus
       define_enumerable_on klass
     end
 
+    # If the page class doesn't respond to `each` then
+    # try to automatically detect it. Try both 'all' and 'find_all'
     def self.define_enumerable_on klass
-      unless respond_to?(:each)
-        if respond_to? :all
-          def each
+      unless klass.respond_to? :each
+        if klass.respond_to? :all
+          def klass.each
             all.each
           end
-        elsif respond_to?(:find_all)
-          def each
+        elsif klass.respond_to?(:find_all)
+          def klass.each
             find_all.each
           end
         else
-          raise "Please define the method `each` on #{klass}"
+          raise "Please define the method `each` on #{klass} (before you include Leviticus::Page)"
         end
       end
     end
 
     def prepare
       raise <<-DOC
+        
         Please subclass the prepare method on #{self.class}.
         This is where you set up all page content before the view is processed.
         Any data that you want to use in your view must be available as an instance
