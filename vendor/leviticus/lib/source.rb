@@ -44,16 +44,21 @@ module Leviticus
     def write_all media
       Dir.mkdir @site rescue ''
       media.each do |medium|
+        total = 0
         Leviticus::Page.all.each do |page_class|
+          this_total = 0
+          puts "Writing: #{page_class}"
           page_class.each do |page|
             page.medium = medium
             page.write
             print '.'
             STDOUT.flush
+            total += 1
+            this_total += 1
           end
-          puts "Processing: #{page_class}"
+          puts "Wrote #{this_total} #{page_class} pages"
         end
-        puts "#{medium.to_s.upcase}: Wrote #{pages.sum {|_,p| p.size}} pages"
+        puts "#{medium.to_s.upcase}: Wrote #{total} pages"
       end
     end
 
