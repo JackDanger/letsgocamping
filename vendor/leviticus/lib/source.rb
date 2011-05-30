@@ -22,30 +22,38 @@ module Leviticus
     end
 
     def process! media = [:html]
-      process media do |medium|
-        index.new.prepare
-        pages.each do |page_class|
-          next if index == page_class
-          page_class.each do |page|
-            page.prepare
-          end
+      run_compiler!
+      prepare_all media
+      write_all   media
+    end
+
+    def prepare_all
+      index_page_class = Leviticus::Page.index
+      index_page_class.new.prepare
+      Leviticus::Page.all.each do |page_class|
+        puts "Preparing: #{page_class}"
+        next if index_page_class == page_class
+        page_class.each do |page|
+          page.prepare
+          print '.'
+          STDOUT.flush
         end
-        write_all media
       end
     end
 
-    def write_all media = [:html]
+    def write_all media
       Dir.mkdir @site rescue ''
       media.each do |medium|
-        pages.each do |page_class|
+        Leviticus::Page.all.each do |page_class|
           page_class.each do |page|
             page.medium = medium
             page.write
             print '.'
             STDOUT.flush
           end
+          puts "Processing: #{page_class}"
         end
-        puts "Wrote #{pages.sum {|_,p| p.size}} pages"
+        puts "#{medium.to_s.upcase}: Wrote #{pages.sum {|_,p| p.size}} pages"
       end
     end
 

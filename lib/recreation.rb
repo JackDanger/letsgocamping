@@ -11,12 +11,16 @@ class Recreation < Leviticus::Source
   end
 
   def compile
-    p Leviticus::Page.all
-    parse_xml!
+    parse_xml_into_database!
+    Leviticus::Page.all.each do |page_class|
+      page_class.each do |page|
+        page.prepare
+      end
+    end
   end
 
   protected
-    def parse_xml!
+    def parse_xml_into_database!
       @doc = Nokogiri::XML @data
       models.each do |model|
         @doc.xpath("//arc:#{model}").each_with_index do |node, idx|

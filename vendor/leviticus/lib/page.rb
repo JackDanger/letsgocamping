@@ -4,6 +4,10 @@ module Leviticus
       @all ||= []
     end
 
+    def self.index
+      all.detect {|klass| 'Index' == klass.name.split(':').last }
+    end
+
     def self.included klass
       all << klass
       klass.instance_exec do
